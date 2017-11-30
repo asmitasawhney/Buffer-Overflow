@@ -1,0 +1,39 @@
+Steps:
+
+1. Prepare source code : code.c
+
+2. Compile as follows: gcc -fno-stack-protector -z execstack code.c -o code -no-pie
+   This will compile the file as an executable, disabling stack protection and with PIE (position independence) disabled. 
+   It is important to compile it as -no-pie so gdb can place and trace breakpoints correctly.
+
+3. Disable aslr: sudo sysctl -w kernel.randomize_va_space=0
+
+4. Prepare fuzzer (calc_payload.py) to find the payload that causes the overflow
+
+5. Prepare payload (exploit.py used to prepare payload.txt). This is not the exact payloadsize, just a round up. We will calculate that further
+
+6. Analyze the executable with payload.txt as input using gdb 
+
+	a] Place break points at the address before and after "scanf" in "main" to see the effect of the payload on stack.
+	  
+		To view disassembly : disas main
+		To run with payload : run < payload.txt
+		To place break points : break *<address>
+	        To view stack : x/6xg (type "help x") to understand the command
+	   	To continue execution after one breakpoint : "c"
+
+	b] Now we calculate the exact payload. PLace one breakpoint just after scanf and the other at retq (end of main). Then analyzie the stack pointer as above.
+	   The payload size will be the difference between the rsp at the start of our input at retq and  scanf
+	   
+		The difference between two address can be calculated as: p/d <add1> - <add2>
+	   
+	   Modify the script with this value. Now we can get control of the instruction pointer by appending the desired address to this payload size.
+ 
+	c] Find the starting address of the function you wish to modify the rip to : disas <name> 
+	   Enter that address in the script exploit_final.py
+
+	d] execute attack as : cat payload.txt | ./code
+
+	e] NOT SURE WHY THERE'S STILL A SEGMENTATION FAULT
+
+LINKS: http://www.therabb1thole.co.uk/tutorial/linux-64-bit-buffer-overflow-tutorial/ 
