@@ -35,5 +35,3 @@ Steps:
 	d] execute attack as : cat payload.txt | ./code
 
 	e] NOT SURE WHY THERE'S STILL A SEGMENTATION FAULT
-
-LINKS: http://www.therabb1thole.co.uk/tutorial/linux-64-bit-buffer-overflow-tutorial/ 
