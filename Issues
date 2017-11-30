@@ -1,0 +1,2 @@
+Control is passed to "success" function as expected but there is still a segmentatiopn fault. 
+This is possibly because of the lack of a return address at the end of the fucntion.
